@@ -1,9 +1,9 @@
-import Hero from "@/components/Home/Hero"
+import Hero from "@/components/Home/Hero";
 
 export default function Page() {
   return (
-    <div className="flex min-h-svh p-6">
+    <main className="w-full bg-black">
       <Hero />
-    </div>
-  )
+    </main>
+  );
 }
