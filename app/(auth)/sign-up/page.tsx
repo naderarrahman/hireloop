@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Lock, User, ArrowRight, Loader2, Building2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 const getErrorMessage = (error: unknown): string => {
@@ -28,7 +28,8 @@ export default function SignUpPage() {
         name: data.name as string,
         email: data.email as string,
         password: data.password as string,
-      });
+        role: data.role as "seeker" | "recruiter" | "admin",
+      } as Parameters<typeof authClient.signUp.email>[0]);
 
       if (response.error) {
         setError(response.error.message || "Failed to create account");
@@ -70,6 +71,53 @@ export default function SignUpPage() {
         )}
 
         <form onSubmit={handleSignUp} className="space-y-4">
+          
+          <div className="space-y-2 pb-2">
+            <label className="text-xs sm:text-sm font-medium text-zinc-300">Select your role</label>
+            <div className="grid grid-cols-2 gap-3">
+              <label className="relative cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value="seeker"
+                  defaultChecked
+                  className="peer sr-only"
+                />
+                <div className="flex items-center justify-center gap-2 p-3 bg-[#050505] border border-zinc-800 rounded-xl peer-checked:border-[#5A45FF] peer-checked:bg-[#5A45FF]/10 transition-all">
+                  <User className="w-4 h-4 text-zinc-400 peer-checked:text-[#5A45FF]" />
+                  <span className="text-sm font-medium text-zinc-400 peer-checked:text-white">Job Seeker</span>
+                </div>
+              </label>
+
+              <label className="relative cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value="recruiter"
+                  className="peer sr-only"
+                />
+                <div className="flex items-center justify-center gap-2 p-3 bg-[#050505] border border-zinc-800 rounded-xl peer-checked:border-[#5A45FF] peer-checked:bg-[#5A45FF]/10 transition-all">
+                  <Building2 className="w-4 h-4 text-zinc-400 peer-checked:text-[#5A45FF]" />
+                  <span className="text-sm font-medium text-zinc-400 peer-checked:text-white">Recruiter</span>
+                </div>
+              </label>
+            </div>
+            
+            <label className="relative cursor-pointer block mt-2">
+              <input
+                type="radio"
+                name="role"
+                value="admin"
+                className="peer sr-only"
+              />
+              <div className="flex items-center justify-center gap-2 p-2 bg-[#050505] border border-zinc-800 rounded-xl peer-checked:border-[#5A45FF] peer-checked:bg-[#5A45FF]/10 transition-all">
+                <span className="text-xs font-medium text-zinc-500 peer-checked:text-zinc-300">Register as Admin (Testing only)</span>
+              </div>
+            </label>
+          </div>
+
+          <div className="h-px w-full bg-zinc-800/50 mb-4" />
+
           <div className="space-y-1.5">
             <label className="text-xs sm:text-sm font-medium text-zinc-300">Full Name</label>
             <div className="relative">
