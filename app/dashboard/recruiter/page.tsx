@@ -1,5 +1,5 @@
 
-export default function RecruiterDashboardPage() {
+export default function RecruiterDashboard() {
   return (
     <div>Recruiter Dashboard</div>
   )
