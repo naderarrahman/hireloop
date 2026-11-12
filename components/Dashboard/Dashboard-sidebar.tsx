@@ -23,6 +23,7 @@ import {
   Users,
   Building2,
   Wallet,
+  PlusCircle,
 } from "lucide-react";
 
 const roleBasedDashboard = {
@@ -36,6 +37,7 @@ const roleBasedDashboard = {
   ],
   recruiter: [
     { name: "Dashboard", url: "/dashboard/recruiter", icon: LayoutDashboard },
+    { name: "Add Job", url: "/dashboard/recruiter/jobs/new", icon: PlusCircle },
     { name: "Manage Jobs", url: "/dashboard/recruiter/jobs", icon: Briefcase },
     { name: "Applications", url: "/dashboard/recruiter/applications", icon: FileText },
     { name: "Settings", url: "/dashboard/recruiter/settings", icon: Settings },

@@ -7,11 +7,7 @@ import { Menu, X, LogOut, LayoutDashboard, User as UserIcon } from "lucide-react
 import { authClient } from "@/lib/auth-client";
 import { usePathname } from "next/navigation";
 
-const navLinks = [
-  { name: "Browse Jobs", href: "#" },
-  { name: "Company", href: "#" },
-  { name: "Pricing", href: "#" },
-];
+
 
 export default function Navbar() {
   
@@ -22,13 +18,22 @@ export default function Navbar() {
   const pathname = usePathname();
 
   const { data: session, isPending } = authClient.useSession();
-  
-  const user = session?.user as { 
+
+    const user = session?.user as { 
     name: string; 
     email: string; 
     image?: string; 
     role?: string;
   } | undefined;
+
+  const navLinks = [
+  { name: "Browse Jobs", href: "#" },
+  { name: "Company", href: "#" },
+  { name: "Pricing", href: "#" },
+  { name: "Dashboard", href: `/dashboard/${user?.role  || "seeker"}` }
+];
+  
+
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
