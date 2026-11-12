@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Menu, X, LogOut, LayoutDashboard, User as UserIcon } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { name: "Browse Jobs", href: "#" },
@@ -13,9 +14,12 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const pathname = usePathname();
 
   const { data: session, isPending } = authClient.useSession();
   
@@ -35,6 +39,8 @@ export default function Navbar() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  if (pathname.startsWith("/dashboard")) return null;
 
   const handleSignOut = async () => {
     await authClient.signOut({
