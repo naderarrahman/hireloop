@@ -12,6 +12,7 @@ export interface JobData {
   frequency: string;
   responsibilities: string;
   qualifications: string;
+  jobId?: string; 
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
