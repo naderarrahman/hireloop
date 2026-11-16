@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
+import { useSearchParams ,useRouter  } from "next/navigation";
 
 const getErrorMessage = (error: unknown): string => {
   if (error instanceof Error) return error.message;
@@ -12,6 +13,11 @@ const getErrorMessage = (error: unknown): string => {
 };
 
 export default function SignInPage() {
+  const router = useRouter();
+
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams?.get("callbackUrl") || "/";
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -32,7 +38,7 @@ export default function SignInPage() {
       if (response.error) {
         setError(response.error.message || "Invalid email or password");
       } else {
-        window.location.href = "/";
+        router.push(callbackUrl);
       }
     } catch (err: unknown) {
       setError(getErrorMessage(err));
