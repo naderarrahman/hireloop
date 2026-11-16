@@ -30,3 +30,20 @@ export default async function createJob(finalData: JobData) {
 
   return res.json();
 }
+
+export const deleteJob = async (jobId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/jobs/${jobId}`, {
+      method: 'DELETE',
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to delete job');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error deleting job:', error);
+    throw error;
+  }
+};

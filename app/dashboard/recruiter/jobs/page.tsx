@@ -14,6 +14,7 @@ import {
   Megaphone,
   TrendingUp,
 } from "lucide-react";
+import { DeleteJobDialog } from "@/components/Dashboard/DeleteJobDialog";
 
 interface Job {
   _id: string;
@@ -187,9 +188,7 @@ export default async function ManageJobs() {
                           <Pencil className="w-3 h-3" />
                           Edit
                         </button>
-                        <button className="p-2 text-zinc-500 hover:text-red-400 bg-zinc-900 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <DeleteJobDialog job={job} />
                         <button className="p-2 text-zinc-500 hover:text-white bg-zinc-900 hover:bg-zinc-800 rounded-lg transition-colors border border-transparent">
                           <MoreVertical className="w-4 h-4" />
                         </button>
