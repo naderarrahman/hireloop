@@ -68,3 +68,20 @@ export const updateJob = async (jobId: string, updatedData: JobData) => {
     throw error;
   }
 };
+
+export const getJobById = async (jobId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/jobs/${jobId}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch job details');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching job:', error);
+    throw error;
+  }
+};

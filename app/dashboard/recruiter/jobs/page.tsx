@@ -6,13 +6,12 @@ import {
   MapPin,
   Building2,
   Users,
-  Pencil,
-  Trash2,
   MoreVertical,
   Code2,
   Palette,
   Megaphone,
   TrendingUp,
+  Eye,
 } from "lucide-react"
 import { DeleteJobDialog } from "@/components/Dashboard/DeleteJobDialog"
 import { EditJobDialog } from "@/components/Dashboard/EditJobDialog"
@@ -217,10 +216,20 @@ export default async function ManageJobs() {
                       </p>
                     </td>
 
+                    {/* Actions */}
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
+                        <Link
+                          href={`/dashboard/recruiter/jobs/${job._id}`}
+                          className="rounded-lg border border-transparent bg-zinc-900 p-2 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white"
+                          title="View Details"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Link>
+
                         <EditJobDialog job={job} />
                         <DeleteJobDialog job={job} />
+                        
                         <button className="rounded-lg border border-transparent bg-zinc-900 p-2 text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white">
                           <MoreVertical className="h-4 w-4" />
                         </button>
