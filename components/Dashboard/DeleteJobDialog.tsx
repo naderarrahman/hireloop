@@ -41,14 +41,17 @@ export function DeleteJobDialog({ job }: { job: Job }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button
-          className="p-2 text-zinc-500 hover:text-red-400 bg-zinc-900 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20"
-          title="Delete Job"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </DialogTrigger>
+      
+      <DialogTrigger 
+        render={
+          <button
+            className="p-2 text-zinc-500 hover:text-red-400 bg-zinc-900 hover:bg-red-500/10 rounded-lg transition-colors border border-transparent hover:border-red-500/20"
+            title="Delete Job"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        }
+      />
       
       <DialogContent className="bg-[#0c0c0f] border-zinc-800 text-white sm:max-w-[425px]">
         <DialogHeader>

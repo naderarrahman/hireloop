@@ -1,4 +1,5 @@
 export interface JobData {
+  _id?: string;
   jobTitle: string;
   companyName: string;
   category: string;

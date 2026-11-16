@@ -66,15 +66,18 @@ export function EditJobDialog({ job }: { job: Job }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <button
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
-          title="Edit Job"
-        >
-          <Pencil className="w-3 h-3" />
-          Edit
-        </button>
-      </DialogTrigger>
+      
+      <DialogTrigger 
+        render={
+          <button
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
+            title="Edit Job"
+          >
+            <Pencil className="w-3 h-3" />
+            Edit
+          </button>
+        }
+      />
       
       <DialogContent className="bg-[#0c0c0f] border-zinc-800 text-white sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
