@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { 
-  FileText, CheckCircle2, Clock, TrendingUp, Download, 
-  Briefcase, Code2, Palette, Megaphone, Loader2
+  Briefcase, Code2, Palette, Megaphone, Loader2, Download, AlertTriangle
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { appliedJobs } from "@/lib/api/get";
+import { appliedJobs, appliedJobsCount } from "@/lib/api/get";
 
 interface Application {
   _id: string;
@@ -19,27 +19,44 @@ interface Application {
 }
 
 export default function MyApplicationsPage() {
+  const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
-  const user = session?.user as { id: string; name: string; email: string } | undefined;
+  
+  const user = session?.user as { id: string; name: string; email: string; role?: string } | undefined;
 
   const [applications, setApplications] = useState<Application[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [limitReached, setLimitReached] = useState(false); // ✅ লিমিট স্টেট
+
+  useEffect(() => {
+    if (!isPending && user) {
+      if (user.role !== "seeker") {
+        router.push(`/dashboard/${user.role || "recruiter"}`);
+      }
+    }
+  }, [user, isPending, router]);
 
   useEffect(() => {
     async function fetchData() {
-      if (user?.id) {
+      if (user?.id && user.role === "seeker") {
         try {
+          const countResult = await appliedJobsCount(user.id);
+          
+          if (countResult.count >= 10) {
+            setLimitReached(true);
+          }
+
           const data = await appliedJobs(user.id);
           setApplications(data);
         } catch (error) {
-          console.error("Failed to load applications", error);
+          console.error("Failed to load data", error);
         } finally {
           setIsLoading(false);
         }
       }
     }
     fetchData();
-  }, [user?.id]);
+  }, [user?.id, user?.role]);
 
   const totalApplied = applications.length;
   const shortlisted = applications.filter(a => a.status.toLowerCase() === "shortlisted").length;
@@ -69,7 +86,6 @@ export default function MyApplicationsPage() {
     return <Briefcase className="w-4 h-4 text-zinc-400" />;
   };
 
-  // Relative time (2 hours ago)
   const getRelativeTime = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -84,11 +100,11 @@ export default function MyApplicationsPage() {
     return `${diffInDays} days ago`;
   };
 
-  if (isPending || isLoading) {
+  if (isPending || isLoading || user?.role !== "seeker") {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-[#050505] text-white">
         <Loader2 className="w-8 h-8 animate-spin text-[#5A45FF] mb-4" />
-        <p className="text-zinc-400">Loading applications...</p>
+        <p className="text-zinc-400">Verifying access...</p>
       </div>
     );
   }
@@ -96,25 +112,35 @@ export default function MyApplicationsPage() {
   return (
     <div className="w-full max-w-[1400px] mx-auto p-4 md:p-6 bg-[#050505] min-h-screen text-white">
       
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold mb-1">My Applications</h1>
           <p className="text-zinc-400 text-sm">Track your job applications and interview progress in real-time.</p>
         </div>
-        
         <div className="flex items-center gap-3">
-          <div className="flex bg-[#141414] border border-zinc-800 rounded-lg p-1">
-            <button className="px-4 py-1.5 text-sm font-medium bg-zinc-800 text-white rounded-md transition-colors">Active</button>
-            <button className="px-4 py-1.5 text-sm font-medium text-zinc-400 hover:text-white transition-colors">Archived</button>
-          </div>
           <button className="flex items-center gap-2 bg-white text-black px-4 py-2 rounded-lg text-sm font-semibold hover:bg-zinc-200 transition-colors">
             <Download className="w-4 h-4" /> Export PDF
           </button>
         </div>
       </div>
 
-      {/* Stats Cards */}
+      {limitReached && (
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl mb-6">
+          <div className="flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-yellow-500 shrink-0" />
+            <p className="text-sm text-yellow-400">
+              You have reached the maximum free application limit (10). Upgrade your plan to apply for more jobs.
+            </p>
+          </div>
+          <Link 
+            href="/pricing" 
+            className="bg-yellow-500 hover:bg-yellow-600 text-black text-xs font-bold px-4 py-2 rounded-lg transition-colors whitespace-nowrap shrink-0"
+          >
+            Upgrade Plan
+          </Link>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-[#141414] border border-zinc-800 rounded-xl p-5">
           <p className="text-xs text-zinc-500 mb-2">Total Applied</p>
@@ -134,7 +160,6 @@ export default function MyApplicationsPage() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="bg-[#141414] border border-zinc-800 rounded-2xl overflow-hidden">
         {applications.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-16 text-center">
@@ -181,10 +206,7 @@ export default function MyApplicationsPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
-                      <Link 
-                        href={`/jobs/${app.jobId}`}
-                        className="text-sm text-zinc-400 hover:text-white transition-colors"
-                      >
+                      <Link href={`/jobs/${app.jobId}`} className="text-sm text-zinc-400 hover:text-white transition-colors">
                         Details
                       </Link>
                     </td>

@@ -9,6 +9,7 @@ import { JobData } from "@/lib/actions/jobs";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { applyForApplication } from "@/lib/actions/applications";
+import { appliedJobsCount } from "@/lib/api/get"; // ✅ ইমপোর্ট করুন
 
 export default function JobDetails({ job }: { job: JobData }) {
   const { data: session } = authClient.useSession();
@@ -37,6 +38,15 @@ export default function JobDetails({ job }: { job: JobData }) {
     setIsApplying(true);
 
     try {
+      const countResult = await appliedJobsCount(user.id);
+      console.log("Current application count:", countResult); // 👈 এটি যোগ করুন
+
+      
+      if (countResult.count >= 10) {
+        router.push('/payment');
+        return;
+      }
+
       const res = await applyForApplication({
         jobId: job._id as string,
         jobTitle: job.jobTitle,
