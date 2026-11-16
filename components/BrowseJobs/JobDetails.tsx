@@ -38,7 +38,7 @@ export default function JobDetails({ job }: { job: JobData }) {
 
     try {
       const res = await applyForApplication({
-        jobId: job._id,
+        jobId: job._id as string,
         jobTitle: job.jobTitle,
         companyName: job.companyName,
         userId: user.id,

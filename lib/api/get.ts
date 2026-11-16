@@ -13,3 +13,20 @@ export default async function get(query?: string) {
 
   return res.json();
 }
+
+export const appliedJobs = async (userId: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/applications?userId=${userId}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch applied jobs');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching applied jobs:', error);
+    throw error;
+  }
+};
