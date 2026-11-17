@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth";
 import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "@better-auth/mongo-adapter";
+import { admin } from "better-auth/plugins"
+
 
 const client = new MongoClient(`${process.env.MONGODB_URI}`);
 const db = client.db("hireloop");
@@ -9,8 +11,10 @@ export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
-
-    emailAndPassword: { 
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  trustedOrigins: ["http://localhost:3000"],
+  
+  emailAndPassword: { 
     enabled: true, 
   }, 
   socialProviders: { 
@@ -27,4 +31,7 @@ export const auth = betterAuth({
             } 
         }
     },
+    plugins: [
+        admin() 
+    ],
 });

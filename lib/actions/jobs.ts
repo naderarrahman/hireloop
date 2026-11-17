@@ -1,3 +1,4 @@
+
 export interface JobData {
   _id?: string;
   jobTitle: string;
@@ -18,6 +19,7 @@ export interface JobData {
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
 export default async function createJob(finalData: JobData) {
+  
   const res = await fetch(`${BASE_URL}/jobs`, {
     method: 'POST',
     headers: {

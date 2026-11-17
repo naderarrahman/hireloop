@@ -9,7 +9,8 @@ import { JobData } from "@/lib/actions/jobs";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { applyForApplication } from "@/lib/actions/applications";
-import { appliedJobsCount } from "@/lib/api/get"; // ✅ ইমপোর্ট করুন
+import { appliedJobsCount } from "@/lib/api/get";
+import { premiumUser } from "@/lib/actions/pUser";
 
 export default function JobDetails({ job }: { job: JobData }) {
   const { data: session } = authClient.useSession();
@@ -38,13 +39,17 @@ export default function JobDetails({ job }: { job: JobData }) {
     setIsApplying(true);
 
     try {
-      const countResult = await appliedJobsCount(user.id);
-      console.log("Current application count:", countResult); // 👈 এটি যোগ করুন
+      const preUser = await premiumUser({ userId: user.id });
+      console.log("Premium status:", preUser);
 
-      
-      if (countResult.count >= 10) {
-        router.push('/payment');
-        return;
+      if (!preUser.isPremium) {
+        const countResult = await appliedJobsCount(user.id);
+        console.log("Current application count:", countResult);
+
+        if (countResult.count >= 10) {
+          router.push('/payment');
+          return;
+        }
       }
 
       const res = await applyForApplication({
@@ -62,7 +67,7 @@ export default function JobDetails({ job }: { job: JobData }) {
         alert("Application submitted successfully!");
       }
     } catch (error) {
-      console.error(error);
+      console.error("Error in handleApply:", error);
       alert("Failed to submit application");
     } finally {
       setIsApplying(false);

@@ -4,13 +4,26 @@ import { useState } from "react"
 import Link from "next/link"
 import { Building2, MapPin, CalendarDays, ChevronDown } from "lucide-react"
 import createJob from "@/lib/actions/jobs"
+import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 export default function AddJobPage() {
+  const router = useRouter()
+  const {data: session } = authClient.useSession()
+  const recruiterId = session?.user.id
+  console.log(recruiterId)
+
+
   const [jobType, setJobType] = useState("Full-time")
   const [isRemote, setIsRemote] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!session?.user?.id) {
+      alert("You must be logged in to post a job.")
+      router.push("/sign-in")
+      return
+    }
 
     const formData = new FormData(e.currentTarget)
     const data = Object.fromEntries(formData.entries())
@@ -18,6 +31,7 @@ export default function AddJobPage() {
     const finalData = {
       jobTitle: data.jobTitle as string,
       companyName: data.companyName as string,
+      recruiterId : recruiterId as string,
       category: data.category as string,
       jobType: jobType,
       isRemote: isRemote,
