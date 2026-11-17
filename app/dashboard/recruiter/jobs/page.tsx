@@ -15,9 +15,8 @@ import {
 } from "lucide-react";
 import { DeleteJobDialog } from "@/components/Dashboard/DeleteJobDialog";
 import { EditJobDialog } from "@/components/Dashboard/EditJobDialog";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { getSession } from "@/lib/core/session";
 
 interface Job {
   _id: string;
@@ -54,9 +53,7 @@ const getCategoryIcon = (category: string) => {
 };
 
 export default async function ManageJobs() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
 
   if (!session?.user?.id) {
     redirect("/sign-in");

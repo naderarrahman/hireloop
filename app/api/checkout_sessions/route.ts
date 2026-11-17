@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import { stripe } from '@/lib/stripe';
-import { auth } from '@/lib/auth';
+import { getSession } from '@/lib/core/session';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST() {
   try {
     const headersList = await headers();
-
-    const session = await auth.api.getSession({
-      headers: headersList,
-    });
+    const session = await getSession();
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -24,7 +21,7 @@ export async function POST() {
       line_items: [{ price: 'price_1UcTEPCqcmBsebfauPzvPrsZ', quantity: 1 }],
       mode: 'payment',
       customer_email: userEmail,
-      metadata:{
+      metadata: {
         userId: session?.user.id,
       },
       success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
